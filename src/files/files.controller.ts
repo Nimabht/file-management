@@ -3,6 +3,9 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  Get,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
@@ -13,6 +16,16 @@ import { File } from './entities/file.entity';
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+
+  @Get()
+  async getAllFiles(): Promise<File[]> {
+    return this.filesService.getAllFiles();
+  }
+
+  @Get(':fileId')
+  async getFileById(@Param('fileId') fileId: string): Promise<File> {
+    return this.filesService.getFileById(fileId);
+  }
 
   @Post('upload')
   @UseInterceptors(
@@ -31,5 +44,10 @@ export class FilesController {
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<File> {
     return this.filesService.uploadFile(file.filename);
+  }
+
+  @Delete(':fileId')
+  async deleteFile(@Param('fileId') fileId: string): Promise<void> {
+    this.filesService.deleteFile(fileId);
   }
 }
