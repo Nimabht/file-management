@@ -13,7 +13,7 @@ export class File {
   id: string;
 
   @Column()
-  file_name: string;
+  fileName: string;
 
   @Column({ default: 0 })
   remaining_downloads: number;
