@@ -1,10 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { File } from './file.entity';
 
 @Entity()
-export class WhitelistIps {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+export class WhitelistedIP {
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
-  ip: string;
+  ipAddress: string;
+
+  @ManyToMany(() => File, (file) => file.whitelistedIPs)
+  files: File[];
 }

@@ -5,7 +5,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { WhitelistIps } from './whitelistIPs.entity';
+import { WhitelistedIP } from './whitelistIPs.entity';
 
 @Entity()
 export class File {
@@ -15,10 +15,10 @@ export class File {
   @Column()
   file_name: string;
 
-  @Column()
+  @Column({ default: 0 })
   remaining_downloads: number;
 
-  @ManyToMany(() => WhitelistIps)
+  @ManyToMany(() => WhitelistedIP)
   @JoinTable()
-  whitelistIps: WhitelistIps[];
+  whitelistedIPs: WhitelistedIP[];
 }
