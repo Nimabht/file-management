@@ -4,6 +4,7 @@ import { File } from './entities/file.entity';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { WhitelistedIP } from './entities/whitelistIPs.entity';
+import { UpdateFileDto } from './update-file.dto';
 
 @Injectable()
 export class FilesService {
@@ -36,6 +37,36 @@ export class FilesService {
     });
     await this.fileRepository.save(newFile);
     return newFile;
+  }
+
+  async updateFile(
+    fileId: string,
+    updateFileDto: UpdateFileDto,
+  ): Promise<File> {
+    const { downloadLimit, whitelistedIPs } = updateFileDto;
+    const file = await this.getFileById(fileId);
+
+    if (!!downloadLimit) file.remaining_downloads = downloadLimit;
+
+    if (!!whitelistedIPs) {
+      const newIp = new WhitelistedIP();
+      newIp.ipAddress = whitelistedIPs[0];
+      file.whitelistedIPs = [newIp];
+      await this.fileRepository.save(file);
+      await this.whiteListedIpRepository.save(newIp);
+
+      // const IPs = [];
+      // whitelistedIPs.map(async (ip) => {
+      //   const newIp = new WhitelistedIP();
+      //   newIp.ipAddress = ip;
+      //   await this.whiteListedIpRepository.save(newIp);
+      //   IPs.push(newIp);
+      // });
+      // file.whitelistedIPs = IPs;
+    }
+
+    await this.fileRepository.save(file);
+    return file;
   }
 
   //TODO:check if its actually works
