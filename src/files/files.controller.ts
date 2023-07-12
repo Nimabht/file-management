@@ -6,12 +6,16 @@ import {
   Get,
   Delete,
   Param,
+  Patch,
+  Body,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { File } from './entities/file.entity';
+import { UpdateFileDto } from './update-file.dto';
 
 @Controller('files')
 export class FilesController {
@@ -43,7 +47,16 @@ export class FilesController {
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<File> {
+    if (!file) throw new BadRequestException("File doesn't exists.");
     return this.filesService.uploadFile(file.filename);
+  }
+
+  @Patch(':fileId')
+  async updateFile(
+    @Param('fileId') fileId: string,
+    @Body() updateDto: UpdateFileDto,
+  ): Promise<File> {
+    return this.filesService.updateFile(fileId, updateDto);
   }
 
   @Delete(':fileId')
