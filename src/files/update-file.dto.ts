@@ -24,7 +24,6 @@ export class UpdateFileDto {
   })
   @IsArray()
   @IsOptional()
-  @ArrayNotEmpty()
   @IsIP(undefined, { each: true })
   whitelistedIPs: string[];
 }
