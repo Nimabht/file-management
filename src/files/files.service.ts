@@ -75,12 +75,10 @@ export class FilesService {
     return file;
   }
 
-  //TODO:check if its actually works
-  // async deleteFile(fileId: string): Promise<void> {
-  //   const file = await this.getFileById(fileId);
-  //   await this.whiteListedIpRepository.remove(file.whitelistedIPs);
-  //   await this.fileRepository.remove(file);
-  // }
+  async deleteFile(fileId: string): Promise<void> {
+    const file = await this.getFileById(fileId);
+    await this.fileRepository.remove(file);
+  }
 
   async createStream(fileId: string): Promise<ReadStream> {
     const file = await this.getFileById(fileId);

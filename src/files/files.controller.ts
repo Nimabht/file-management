@@ -83,9 +83,10 @@ export class FilesController {
     });
     return new StreamableFile(stream);
   }
-}
 
-// @Delete(':fileId')
-// async deleteFile(@Param('fileId') fileId: string): Promise<void> {
-//   this.filesService.deleteFile(fileId);
-// }
+  @UseGuards(AuthGuard)
+  @Delete(':fileId')
+  async deleteFile(@Param('fileId') fileId: string): Promise<void> {
+    this.filesService.deleteFile(fileId);
+  }
+}
