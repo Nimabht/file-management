@@ -11,6 +11,7 @@ import {
   BadRequestException,
   StreamableFile,
   Res,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
@@ -18,7 +19,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { File } from './entities/file.entity';
 import { UpdateFileDto } from './update-file.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { HeadersDto } from './headers.dto';
 
 @Controller('files')
@@ -66,9 +67,10 @@ export class FilesController {
   @Get('/:fileId/download')
   async getFile(
     @Param('fileId') fileId: string,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<StreamableFile> {
-    await this.filesService.download(fileId);
+    await this.filesService.download(fileId, req.ip);
     const stream = await this.filesService.createStream(fileId);
     const Headers: HeadersDto = await this.filesService.getHeaders(fileId);
     res.set({
