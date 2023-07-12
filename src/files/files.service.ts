@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { File } from './entities/file.entity';
 import { Repository } from 'typeorm';
@@ -57,6 +57,7 @@ export class FilesService {
     if (!!whitelistedIPs) {
     }
 
+    await this.fileRepository.save(file);
     return file;
   }
 
