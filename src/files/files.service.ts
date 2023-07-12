@@ -98,7 +98,7 @@ export class FilesService {
 
   async download(fileId: string, ip: string): Promise<void> {
     const file = await this.getFileById(fileId);
-    console.log(file.whitelistedIPs[0].ipAddress);
+
     if (file.remaining_downloads < 1)
       throw new ForbiddenException('File is limited.');
 
