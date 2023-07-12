@@ -20,4 +20,22 @@ export class AuthService {
     );
     await this.adminUser.hashPassword();
   }
+
+  async validateAdmin(
+    username: string,
+    password: string,
+  ): Promise<Admin | null> {
+    if (
+      username === this.adminUser.username &&
+      (await this.adminUser.validatePassword(password))
+    ) {
+      return this.adminUser;
+    }
+    return null;
+  }
+
+  async generateToken(admin: Admin): Promise<string> {
+    const payload = { username: admin.username };
+    return this.jwtService.signAsync(payload);
+  }
 }
