@@ -15,7 +15,7 @@ import { HeadersDto } from './headers.dto';
 export class FilesService {
   constructor(
     @InjectRepository(File) private fileRepository: Repository<File>,
-    @InjectRepository(File)
+    @InjectRepository(WhitelistedIP)
     private whiteListedIpRepository: Repository<WhitelistedIP>,
   ) {}
 
@@ -55,8 +55,22 @@ export class FilesService {
     if (!!downloadLimit) file.remaining_downloads = downloadLimit;
 
     if (!!whitelistedIPs) {
+      const newWhiteListIPs = [];
+      for (let i = 0; i < whitelistedIPs.length; i++) {
+        const existingIP = await this.whiteListedIpRepository.findOneBy({
+          ipAddress: whitelistedIPs[i],
+        });
+        if (!existingIP) {
+          const newIp = new WhitelistedIP();
+          newIp.ipAddress = whitelistedIPs[i];
+          await this.whiteListedIpRepository.save(newIp);
+          newWhiteListIPs.push(newIp);
+        } else {
+          newWhiteListIPs.push(existingIP);
+        }
+      }
+      file.whitelistedIPs = newWhiteListIPs;
     }
-
     await this.fileRepository.save(file);
     return file;
   }
@@ -82,11 +96,19 @@ export class FilesService {
     };
   }
 
-  async download(fileId: string): Promise<void> {
+  async download(fileId: string, ip: string): Promise<void> {
     const file = await this.getFileById(fileId);
+    console.log(file.whitelistedIPs[0].ipAddress);
     if (file.remaining_downloads < 1)
       throw new ForbiddenException('File is limited.');
-    //FIXME: ip checking must be added in this section
+
+    const isValid = file.whitelistedIPs.find((whiteListIp) => {
+      return whiteListIp.ipAddress === ip;
+    });
+
+    if (!isValid)
+      throw new ForbiddenException(`File is limited for ip ${ip} .`);
+
     file.remaining_downloads--;
     await this.fileRepository.save(file);
   }
