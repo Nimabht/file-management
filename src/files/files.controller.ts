@@ -12,6 +12,7 @@ import {
   StreamableFile,
   Res,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
@@ -21,6 +22,7 @@ import { File } from './entities/file.entity';
 import { UpdateFileDto } from './update-file.dto';
 import { Request, Response } from 'express';
 import { HeadersDto } from './headers.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('files')
 export class FilesController {
@@ -36,6 +38,7 @@ export class FilesController {
     return this.filesService.getFileById(fileId);
   }
 
+  @UseGuards(AuthGuard)
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -56,6 +59,7 @@ export class FilesController {
     return this.filesService.uploadFile(file.filename);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':fileId')
   async updateFile(
     @Param('fileId') fileId: string,
