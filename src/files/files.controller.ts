@@ -9,6 +9,8 @@ import {
   Patch,
   Body,
   BadRequestException,
+  StreamableFile,
+  Res,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
@@ -16,6 +18,8 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { File } from './entities/file.entity';
 import { UpdateFileDto } from './update-file.dto';
+import { Response } from 'express';
+import { HeadersDto } from './headers.dto';
 
 @Controller('files')
 export class FilesController {
@@ -59,8 +63,22 @@ export class FilesController {
     return this.filesService.updateFile(fileId, updateDto);
   }
 
-  @Delete(':fileId')
-  async deleteFile(@Param('fileId') fileId: string): Promise<void> {
-    this.filesService.deleteFile(fileId);
+  @Get('/:fileId/download')
+  async getFile(
+    @Param('fileId') fileId: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const stream = await this.filesService.createStream(fileId);
+    const Headers: HeadersDto = await this.filesService.getHeaders(fileId);
+    res.set({
+      'Content-Type': Headers.mimeType,
+      'Content-Disposition': `attachment; filename="${Headers.filename}"`,
+    });
+    return new StreamableFile(stream);
   }
 }
+
+// @Delete(':fileId')
+// async deleteFile(@Param('fileId') fileId: string): Promise<void> {
+//   this.filesService.deleteFile(fileId);
+// }

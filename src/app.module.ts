@@ -15,7 +15,7 @@ import { MulterModule } from '@nestjs/platform-express';
       password: '11NIma22',
       database: 'file_management',
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
     FilesModule,
     MulterModule.register({
