@@ -18,13 +18,7 @@ export class File {
   @Column({ default: 0 })
   remaining_downloads: number;
 
-  @ManyToMany(() => WhitelistedIP, {
-    cascade: true,
-  })
-  @JoinTable({
-    name: 'file_whitelistedIP',
-    joinColumn: { name: 'file_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'ip_id', referencedColumnName: 'id' },
-  })
+  @ManyToMany(() => WhitelistedIP)
+  @JoinTable({ name: 'file_whiteListIP' })
   whitelistedIPs: WhitelistedIP[];
 }
