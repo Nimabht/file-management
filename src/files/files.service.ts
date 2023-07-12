@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { WhitelistedIP } from './entities/whitelistIPs.entity';
 import { UpdateFileDto } from './update-file.dto';
+import { createReadStream } from 'fs';
+import { lookup } from 'mime-types';
+import { join } from 'path';
+import { ReadStream } from 'typeorm/platform/PlatformTools';
+import { HeadersDto } from './headers.dto';
 
 @Injectable()
 export class FilesService {
@@ -39,6 +44,7 @@ export class FilesService {
     return newFile;
   }
 
+  //FIXME: adding whitelisted ips have problem
   async updateFile(
     fileId: string,
     updateFileDto: UpdateFileDto,
@@ -49,30 +55,30 @@ export class FilesService {
     if (!!downloadLimit) file.remaining_downloads = downloadLimit;
 
     if (!!whitelistedIPs) {
-      const newIp = new WhitelistedIP();
-      newIp.ipAddress = whitelistedIPs[0];
-      file.whitelistedIPs = [newIp];
-      await this.fileRepository.save(file);
-      await this.whiteListedIpRepository.save(newIp);
-
-      // const IPs = [];
-      // whitelistedIPs.map(async (ip) => {
-      //   const newIp = new WhitelistedIP();
-      //   newIp.ipAddress = ip;
-      //   await this.whiteListedIpRepository.save(newIp);
-      //   IPs.push(newIp);
-      // });
-      // file.whitelistedIPs = IPs;
     }
 
-    await this.fileRepository.save(file);
     return file;
   }
 
   //TODO:check if its actually works
-  async deleteFile(fileId: string): Promise<void> {
+  // async deleteFile(fileId: string): Promise<void> {
+  //   const file = await this.getFileById(fileId);
+  //   await this.whiteListedIpRepository.remove(file.whitelistedIPs);
+  //   await this.fileRepository.remove(file);
+  // }
+
+  async createStream(fileId: string): Promise<ReadStream> {
     const file = await this.getFileById(fileId);
-    await this.whiteListedIpRepository.remove(file.whitelistedIPs);
-    await this.fileRepository.remove(file);
+    console.log(join(__dirname, '../../uploads', file.fileName));
+    return createReadStream(join(__dirname, '../../uploads', file.fileName));
+  }
+
+  async getHeaders(fileId: string): Promise<HeadersDto> {
+    const file = await this.getFileById(fileId);
+    const mimeType = lookup(join(__dirname, '../../uploads', file.fileName));
+    return {
+      mimeType,
+      filename: file.fileName,
+    };
   }
 }
