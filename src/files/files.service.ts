@@ -44,7 +44,6 @@ export class FilesService {
     return newFile;
   }
 
-  //FIXME: adding whitelisted ips have problem
   async updateFile(
     fileId: string,
     updateFileDto: UpdateFileDto,
@@ -52,7 +51,7 @@ export class FilesService {
     const { downloadLimit, whitelistedIPs } = updateFileDto;
     const file = await this.getFileById(fileId);
 
-    if (!!downloadLimit) file.remaining_downloads = downloadLimit;
+    if (downloadLimit !== undefined) file.remaining_downloads = downloadLimit;
 
     if (!!whitelistedIPs) {
       const newWhiteListIPs = [];
