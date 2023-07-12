@@ -68,6 +68,7 @@ export class FilesController {
     @Param('fileId') fileId: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<StreamableFile> {
+    await this.filesService.download(fileId);
     const stream = await this.filesService.createStream(fileId);
     const Headers: HeadersDto = await this.filesService.getHeaders(fileId);
     res.set({

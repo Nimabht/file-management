@@ -70,7 +70,6 @@ export class FilesService {
 
   async createStream(fileId: string): Promise<ReadStream> {
     const file = await this.getFileById(fileId);
-    console.log(join(__dirname, '../../uploads', file.fileName));
     return createReadStream(join(__dirname, '../../uploads', file.fileName));
   }
 
@@ -81,5 +80,14 @@ export class FilesService {
       mimeType,
       filename: file.fileName,
     };
+  }
+
+  async download(fileId: string): Promise<void> {
+    const file = await this.getFileById(fileId);
+    if (file.remaining_downloads < 1)
+      throw new ForbiddenException('File is limited.');
+    //FIXME: ip checking must be added in this section
+    file.remaining_downloads--;
+    await this.fileRepository.save(file);
   }
 }
