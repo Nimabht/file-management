@@ -4,6 +4,8 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { WhitelistedIP } from './whitelistIPs.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -41,4 +43,10 @@ export class File {
     description: 'The list of whitelisted IP addresses for the file',
   })
   whitelistedIPs: WhitelistedIP[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
