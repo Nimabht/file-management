@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { File } from './entities/file.entity';
 import { Repository } from 'typeorm';
@@ -49,6 +54,7 @@ export class FilesService {
     updateFileDto: UpdateFileDto,
   ): Promise<File> {
     const { downloadLimit, whitelistedIPs } = updateFileDto;
+    const allPromises = [];
     const file = await this.getFileById(fileId);
 
     if (downloadLimit !== undefined) file.remaining_downloads = downloadLimit;
@@ -62,7 +68,7 @@ export class FilesService {
         if (!existingIP) {
           const newIp = new WhitelistedIP();
           newIp.ipAddress = whitelistedIPs[i];
-          await this.whiteListedIpRepository.save(newIp);
+          allPromises.push(this.whiteListedIpRepository.save(newIp));
           newWhiteListIPs.push(newIp);
         } else {
           newWhiteListIPs.push(existingIP);
@@ -70,7 +76,15 @@ export class FilesService {
       }
       file.whitelistedIPs = newWhiteListIPs;
     }
-    await this.fileRepository.save(file);
+    allPromises.push(this.fileRepository.save(file));
+    const results = await Promise.allSettled(allPromises);
+    const hasError = results.some((result) => result.status === 'rejected');
+    if (!!hasError) {
+      throw new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
     return file;
   }
 
