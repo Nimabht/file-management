@@ -1,0 +1,184 @@
+{
+	"info": {
+		"_postman_id": "7f647c90-6667-47ab-90c1-b0b4ec755cd2",
+		"name": "File management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25775210"
+	},
+	"item": [
+		{
+			"name": "Uploading file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNjg5NTAxMTI4LCJleHAiOjE2ODk1MDQ3Mjh9.78wBhU7LWiN1HvhDMVUQcYiKM5LKc5wOIDX1WZtuy1c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/asus/Desktop/test.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/files/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all files",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a file by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/files/220f844b-8662-4033-b11a-2cb9985c2521",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files",
+						"220f844b-8662-4033-b11a-2cb9985c2521"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download file",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/files/220f844b-8662-4033-b11a-2cb9985c2521/download",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files",
+						"220f844b-8662-4033-b11a-2cb9985c2521",
+						"download"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNjg5NTAxMTI4LCJleHAiOjE2ODk1MDQ3Mjh9.78wBhU7LWiN1HvhDMVUQcYiKM5LKc5wOIDX1WZtuy1c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"whitelistedIPs\":[\"::1\",\"192.168.1.2\",\"127.0.0.1\"],\r\n    \"downloadLimit\":300\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/files/c9dc1e42-10cc-4851-b54c-643e99068761",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files",
+						"c9dc1e42-10cc-4851-b54c-643e99068761"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
